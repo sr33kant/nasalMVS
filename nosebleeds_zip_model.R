@@ -14,9 +14,10 @@ merged_data=merge(first_merge,randomized_data)
 ds<-merged_data[,c("nosebleeds","mucus.viscosity","tissue.use","country",'previous.year','arm')]
 bs$tissue.use=as.numeric(bs$tissue.use)
 bs$country=as.numeric(bs$country)
-summary( zingp<-zeroinfl(nosebleeds~bs(mucus.viscosity,degree=3)+ tissue.use+country+previous.year*arm|ns(mucus.viscosity,df=10)+ tissue.use+country+previous.year*arm,data=ds,dist = "poisson"))
+summary( zingp<-zeroinfl(nosebleeds~bs(mucus.viscosity,df=3)+ tissue.use+country+previous.year*arm|bs(mucus.viscosity,df=3)+ tissue.use+country+previous.year*arm,data=ds,dist = "poisson"))
+AIC(zingp)
 zingp$coefficients
-summary(p1 <- glm(nosebleeds ~ ns(mucus.viscosity,df=3)+ tissue.use+country+previous.year*arm, family = poisson, data = ds))
+summary(p1 <- glm(nosebleeds ~ bs(mucus.viscosity,df=3,knots=c(0,3,5))+ tissue.use+country+previous.year*arm, family = poisson, data = ds))
 summary.glm(p1)$dispersion
 vuong(p1,zingp)
 
