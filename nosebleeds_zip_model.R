@@ -15,10 +15,16 @@ ds<-merged_data[,c("nosebleeds","mucus.viscosity","tissue.use","country",'previo
 bs$tissue.use=as.numeric(bs$tissue.use)
 bs$country=as.numeric(bs$country)
 summary( zingp<-zeroinfl(nosebleeds~.|.,data=ds,dist = "poisson"))
+zingp$coefficients
 summary(p1 <- glm(nosebleeds ~ mucus.viscosity + tissue.use+country, family = poisson, data = ds))
-
+summary.glm(p1)$dispersion
 vuong(p1,zingp)
 
 ### finding chi square for goodness of test ###
 
 pchisq(p1$deviance, df=p1$df.residual, lower.tail=FALSE)
+
+
+### find p and lambda values 
+prob<-predict(zingp,type='zero')
+lamb_da<-predict(zingp,type='count')
